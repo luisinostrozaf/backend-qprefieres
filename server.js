@@ -3,10 +3,14 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 
 const app = express();
-
-app.use(cors()); 
+ 
 app.use(express.json());
-app.options('*', cors());
+const corsOptions = {
+  origin: '*', // This will allow all origins
+  optionsSuccessStatus: 200 // For legacy browser support
+}
+
+app.use(cors(corsOptions));
 
 mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend');
 

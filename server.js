@@ -5,12 +5,20 @@ import mongoose from 'mongoose';
 const app = express();
  
 app.use(express.json());
+
 const corsOptions = {
   origin: '*', // This will allow all origins
   optionsSuccessStatus: 200 // For legacy browser support
 }
 
 app.use(cors(corsOptions));
+
+// Other middleware and routes go here
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend');
 

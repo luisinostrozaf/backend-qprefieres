@@ -6,6 +6,7 @@ const app = express();
 
 app.use(cors()); 
 app.use(express.json());
+app.options('*', cors());
 
 mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend');
 

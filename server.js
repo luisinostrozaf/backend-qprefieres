@@ -62,6 +62,7 @@ app.get('/get-questions', (req, res) => {
     });
 });
 
+//actualizar veces clickeadas
 app.put('/update-question/:id/:option', (req, res) => {
   const id = parseInt(req.params.id);
   const option = req.params.option;
@@ -73,34 +74,20 @@ app.put('/update-question/:id/:option', (req, res) => {
   if (option !== 'option1' && option !== 'option2') {
     return res.status(400).send('Invalid option');
   }
-  Question.findOne({ 'question': { $elemMatch: { id: id } } })
-    .then(doc => {
-      if (!doc) {
-        return res.status(404).send('Question not found');
-      }
 
-      // Find the question in the question array
-      const question = doc.question.find(q => q.id === id);
+  const updateField = option === 'option1' ? 'question.$.opt1_times_clicked' : 'question.$.opt2_times_clicked';
 
-      if (option === 'option1') {
-        question.opt1_times_clicked += 1;
-      } else if (option === 'option2') {
-        question.opt2_times_clicked += 1;
-      }
-
-      // Update the question in the database
-      return Question.updateOne(
-        { '_id': doc._id, 'question.id': id },
-        { $set: { 'question.$': question } }
-      );
-    })
-    .then(() => {
-      res.status(200).send('Question updated successfully');
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).send(err);
-    });
+  Question.updateOne(
+    { 'question': { $elemMatch: { id: id } } },
+    { $inc: { [updateField]: 1 } }
+  )
+  .then(() => {
+    res.status(200).send('Question updated successfully');
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).send(err);
+  });
 });
 
 app.listen(port, () => {

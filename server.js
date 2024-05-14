@@ -1,26 +1,21 @@
 import express from 'express';
 import cors from 'cors'; 
 import mongoose from 'mongoose';
+import compression from 'compression';
 
 const app = express();
  
 app.use(express.json());
+app.use(compression());
 
 const corsOptions = {
-  origin: '*', // This will allow all origins
-  optionsSuccessStatus: 200 // For legacy browser support
+  origin: '*', 
+  optionsSuccessStatus: 200 
 }
 
 app.use(cors(corsOptions));
 
-// Other middleware and routes go here
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend');
+mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend', { poolSize: 10 });
 
 const db = mongoose.connection;
 
@@ -43,6 +38,8 @@ const questionSchema = new mongoose.Schema({
   opt2_times_clicked: Number
 });
 
+questionSchema.index({ 'id': 1 });
+
 const QuestionDocumentSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   question: [questionSchema]
@@ -52,7 +49,7 @@ const Question = mongoose.model('Question', QuestionDocumentSchema, 'questions')
 
 //obtener preguntas
 app.get('/get-questions', (req, res) => {
-  Question.find({})
+  Question.find({}).lean()
     .then(questions => {
       res.status(200).json(questions);
     })
@@ -88,6 +85,11 @@ app.put('/update-question/:id/:option', (req, res) => {
     console.error(err);
     res.status(500).send(err);
   });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 app.listen(port, () => {

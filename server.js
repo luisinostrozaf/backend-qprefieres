@@ -15,7 +15,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend', { poolSize: 10 });
+mongoose.connect('mongodb+srv://luisinostrozaf:iQs8jiobZlqlBmma@qpbackend.dpi1eon.mongodb.net/qprefieres?retryWrites=true&w=majority&appName=QPBackend', 
+{ useNewUrlParser: true, useUnifiedTopology: true, poolSize: 10 });
 
 const db = mongoose.connection;
 

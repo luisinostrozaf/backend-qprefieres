@@ -74,12 +74,13 @@ app.put('/update-question/:id/:option', (req, res) => {
 
   const updateField = option === 'option1' ? 'question.$.opt1_times_clicked' : 'question.$.opt2_times_clicked';
 
-  Question.updateOne(
+  Question.findOneAndUpdate(
     { 'question': { $elemMatch: { id: id } } },
-    { $inc: { [updateField]: 1 } }
+    { $inc: { [updateField]: 1 } },
+    { new: true, projection: { _id: 0, question: 1 } }
   )
-  .then(() => {
-    res.status(200).send('Question updated successfully');
+  .then((updatedQuestion) => {
+    res.status(200).json(updatedQuestion);
   })
   .catch(err => {
     console.error(err);
